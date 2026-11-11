@@ -8,7 +8,7 @@ A customizable pomodoro timer web app to help you get in the zone!
 - Upload your own background
 - Choose your own round-end jingle
 
-## Get Started ｜　始まる
+## Get Started
 Website link: https://ganbarou-pomodoro.netlify.app/
 
 ## Built with
