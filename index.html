@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Pomodoro timer
+     Author: William Marklynn (Yang Wen-li)
+     Files:    index.html (markup)   style.css (styling)   script.js (behavior)
+     Layout:   1. Mode switch   2. Timer dial   3. Controls   4. Settings
+     Element ids below (m25, go, bgFile, ...) are used by script.js; rmb to edit both files
+-->
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pomodoro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="card">
+
+    <!-- 1. Mode switch: focus/break lengths in minutes -->
+    <div class="seg" role="group" aria-label="Timer length">
+      <button id="m25" aria-pressed="true">25 / 5</button>
+      <button id="m50" aria-pressed="false">50 / 10</button>
+    </div>
+
+    <!-- 2. Timer dial: progress ring, time left, phase name, round counter -->
+    <div class="dial">
+      <!-- Ring radius is 110, so its circumference is about 691.15 (see RADIUS in the script) -->
+      <svg viewBox="0 0 240 240" aria-hidden="true">
+        <circle class="track" cx="120" cy="120" r="110" fill="none" stroke-width="8"/>
+        <circle class="bar" id="bar" cx="120" cy="120" r="110" fill="none"
+                stroke-width="8" stroke-linecap="round"
+                stroke-dasharray="691.15" stroke-dashoffset="0"/>
+      </svg>
+      <div class="readout">
+        <div class="time" id="time" role="timer" aria-live="off">25:00</div>
+        <div class="phase" id="phase">Focus</div>
+      </div>
+    </div>
+    <div class="count" id="count"></div>
+
+    <!-- 3. Controls -->
+    <div class="row">
+      <button class="btn main" id="go">Start</button>   <!-- start button -->
+      <button class="btn" id="reset">Reset</button>     <!-- restart the current clock -->
+      <button class="btn" id="skip">Skip</button>       <!-- jump to the next break/focus -->
+    </div>
+    <div class="again">
+      <button class="link" id="cycle">Restart cycle</button>  <!-- for restrating cycle -->
+    </div>
+
+    <!-- 4. Settings: background, round-end sound, volume, auto-start -->
+    <details>
+      <summary>Customize background and sound</summary>
+
+      <div class="set">
+
+        <!-- Custom Background image -->
+        <div class="item">
+          <span>Background image</span>
+          <div class="acts">
+            <label class="btn" for="bgFile" tabindex="0" id="bgLbl">Upload image</label>
+            <button class="btn" id="bgClear">Use default</button>
+          </div>
+          <input type="file" id="bgFile" accept="image/*">
+        </div>
+
+        <!-- Round-end sound -->
+        <div class="item">
+          <span>Round-end sound</span>
+          <div class="acts">
+            <label class="btn" for="sndFile" tabindex="0" id="sndLbl">Upload sound</label>
+            <button class="btn" id="sndTest">Play</button>
+            <button class="btn" id="sndClear">Use default</button>
+          </div>
+          <input type="file" id="sndFile" accept="audio/*">
+          <div class="name" id="sndName">Default chime</div>
+        </div>
+
+        <!-- Volume -->
+        <div class="item">
+          <span>Volume</span>
+          <input type="range" id="vol" min="0" max="1" step="0.05" value="0.8" aria-label="Volume">
+        </div>
+
+        <!-- Auto-start -->
+        <label class="chk">
+          <input type="checkbox" id="auto" checked>
+          Start the next round automatically
+        </label>
+
+        <!-- Status / error messages from the script -->
+        <div class="msg" id="msg" role="status"></div>
+
+      </div>
+    </details>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

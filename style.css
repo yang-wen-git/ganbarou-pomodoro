@@ -1,0 +1,336 @@
+/*
+  Style sheet for pomodoro timer
+  Author: William Marklynn (Yang Wen-li)　ウィリアム
+  目次：
+   1. Design tokens   
+   2. Base & page   
+   3. Card   
+   4. Mode switch
+   5. Timer dial      
+   6. Controls      
+   7. Settings panel
+   8. Accessibility & motion
+*/ 
+
+/* 1. Design tokens */ 
+:root {
+  /* Colors 色*/
+  --ink: #f3f1fa;
+  --muted: #b9b4d0;
+  --panel: rgba(20, 17, 40, .58);
+  --line: rgba(255, 255, 255, .16);
+
+  /* Phase colors; red for focus, teal for break */
+  --focus: #ff8a6b;
+  --break: #6fe0c0;
+  --accent: var(--focus);
+
+  /* Layout */
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Slightly darker panel in dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --panel: rgba(12, 10, 28, .66);
+  }
+}
+
+:root[data-theme="dark"] {
+  --panel: rgba(12, 10, 28, .66);
+}
+
+
+/* 2. Base & page */ 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--ink);
+
+  /* Default background: layered gradients (replaced by an uploaded image) */
+  background: #1c1740 center / cover no-repeat fixed;
+  background-image:
+    radial-gradient(1200px 700px at 20% 10%, #4a3a8f 0%, transparent 60%),
+    radial-gradient(900px 700px at 90% 90%, #7a3b6e 0%, transparent 55%),
+    linear-gradient(160deg, #1c1740, #0f1030);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* Break phases switch the accent color */
+body.break {
+  --accent: var(--break);
+}
+
+/* Uploaded background image */
+body.has-bg {
+  background-image: var(--bg);
+}
+
+
+/* 3. Card */ 
+.card {
+  width: min(440px, 100%);
+  padding: 26px 24px 22px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+
+/* 4. Mode switch (25/5 and 50/10) */ 
+.seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(255, 255, 255, .08);
+  border-radius: 999px;
+}
+
+.seg button {
+  padding: 10px 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.seg button[aria-pressed="true"] {
+  background: var(--ink);
+  color: #1c1740;
+  font-weight: 600;
+}
+
+
+/* 5. Timer dial */ 
+.dial {
+  position: relative;
+  width: min(300px, 78vw);
+  aspect-ratio: 1;
+  margin: 26px auto 8px;
+}
+
+.dial svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* start the ring at 12 o'clock */
+}
+
+.track {
+  stroke: rgba(255, 255, 255, .12);
+}
+
+.bar {
+  stroke: var(--accent);
+  transition: stroke .4s;
+}
+
+/* Time and phase label, centered inside the ring */
+.readout {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.time {
+  font-size: clamp(48px, 16vw, 68px);
+  font-weight: 300;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.phase {
+  margin-top: 2px;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.count {
+  min-height: 20px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+
+/* 6. Controls */ 
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, .16);
+}
+
+/* Start / Pause button */
+.btn.main {
+  min-width: 130px;
+  border-color: transparent;
+  background: var(--accent);
+  color: #1a1230;
+  font-weight: 600;
+  transition: background .4s;
+}
+
+/* 'Restart cycle' text link */
+.again {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.link {
+  padding: 6px 10px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: var(--ink);
+}
+
+
+/* 7. Settings panel (background, sound, volume, auto-start) */ 
+details {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+summary {
+  color: var(--muted);
+  font-size: 14px;
+  list-style: none;
+  cursor: pointer;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+.set {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.set .item {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.set .item > span {
+  color: var(--muted);
+}
+
+/* Row of upload / play / reset buttons */
+.acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.acts .btn {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+/* Uploaded sound's file name */
+.name {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* File inputs are triggered by their styled labels */
+input[type="file"] {
+  display: none;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+label.chk {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Status messages (upload errors, size warnings) */
+.msg {
+  min-height: 16px;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+
+/* 8. Accessibility & motion */ 
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
