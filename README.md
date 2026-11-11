@@ -28,3 +28,6 @@ MIT
 
 ## 始め方
 ウェブサイトリンクはこちら： https://ganbarou-pomodoro.netlify.app/
+
+## ライセンス
+MIT
